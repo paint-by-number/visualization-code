@@ -36,30 +36,18 @@ outlier_names <- geom_text(data=subset(data, gdp.pc > quantile(gdp.pc, probs=0.8
 median_line <- stat_summary(data=subset(data, country!="Vietnam"),
                             fun.data="median_hilow",
                             geom="smooth", conf.int=0.5)
+labels <- labs(title="Vietnam-African countries comparison",
+       x="Year", y="GDP per capita (2005 USD)")
 
 # Now we can add these individual elements together as we wish
 base_plot
 base_plot + vietnam_line
-base_plot + vietnam_line + outlier_names
+
+base_plot + vietnam_line + outlier_names +
+  theme_minimal() + labels
+ggsave("vietnam_africa_full.pdf")
+
 base_plot + vietnam_line + outlier_names +
   median_line + coord_cartesian(ylim=c(0, 1500)) +
-  theme_minimal() +
-  labs(title="Vietnam vs Africa",
-       x="Year",
-       y="GDP per capita (2005 USD)")
-
-
-# ---- Gower similarity ----
-
-data_avg <- ddply(data, .(country), colwise(mean, na.rm=TRUE))
-data_sim <- data_avg[ , c("pop", "agriculture.%gdp", "export.%gdp", "resource.%gdp")]
-rownames(data_sim) <- data_avg$country
-
-distance_matrix <- as.matrix(daisy(data_sim, metric="gower"))
-distance_vietnam <- distance_matrix[dimnames(distance_matrix)[[1]]=="Vietnam", ]
-
-data_group <- subset(data, country %in% names(distance)[distance < median(distance, na.rm=TRUE)])
-ggplot(data=data_group, aes(x=year, y=gdp.pc)) +
-  geom_line(aes(group=country), alpha=0.4) +
-  geom_line(data=subset(data, country=="Vietnam"), col="red") +
-  geom_point(data=subset(data, country=="Vietnam"), col="blue", shape=1)
+  theme_minimal() + labels
+ggsave("vietnam_africa.pdf")
