@@ -31,12 +31,12 @@ shinyServer(function(input, output) {
     radarchart(data_vietnam, axistype=2, pty=32, plwd=1:5, pcol=1, centerzero=TRUE,
                pfcol="yellow", pdensity=10,
                seg=4, vlabels=c("GDP per capita (2005 USD)", "\n\nInternet User\n(per 100)",
-                                "Infant Survived (per 1000)", "\nLife Exp (Years)"),
+                                "Infant Survived (per 1000)", "\n\nLife Exp\n(Years)"),
               title="Vietnam")
     radarchart(data_other(), axistype=2, pty=32, plwd=1:5, pcol=1, centerzero=TRUE,
                pfcol="yellow", pdensity=10,
                seg=4, vlabels=c("GDP per capita (2005 USD)", "\n\nInternet User\n(per 100)",
-                                "Infant Survived (per 1000)", "\nLife Exp (Years)"),
+                                "Infant Survived (per 1000)", "\n\nLife Exp\n(Years)"),
                title=input$other_country)
   })
 })
