@@ -1,8 +1,6 @@
 rm(list=ls())
 library(WDI)
 library(ggplot2)
-library(plyr)
-library(cluster)
 
 startyear <- 1975
 endyear <- 2011
