@@ -28,15 +28,17 @@ shinyServer(function(input, output) {
 
   output$plot <- renderPlot({
     par(mar=c(1, 1, 1, 1), oma=c(1, 1, 1, 1),  mfrow=c(1, 2))
-    radarchart(data_vietnam, axistype=2, pty=32, plwd=1:5, pcol=1, centerzero=TRUE,
+    radarchart(data_vietnam, axistype=3, pty=32, plwd=1:5, pcol=1, centerzero=TRUE,
                pfcol="yellow", pdensity=10,
                seg=4, vlabels=c("GDP per capita (2005 USD)", "\n\nInternet User\n(per 100)",
                                 "Infant Survived (per 1000)", "\n\nLife Exp\n(Years)"),
+               calcex=0.6,
               title="Vietnam")
-    radarchart(data_other(), axistype=2, pty=32, plwd=1:5, pcol=1, centerzero=TRUE,
+    radarchart(data_other(), axistype=3, pty=32, plwd=1:5, pcol=1, centerzero=TRUE,
                pfcol="yellow", pdensity=10,
                seg=4, vlabels=c("GDP per capita (2005 USD)", "\n\nInternet User\n(per 100)",
                                 "Infant Survived (per 1000)", "\n\nLife Exp\n(Years)"),
+               calcex=0.6,
                title=input$other_country)
   })
 })

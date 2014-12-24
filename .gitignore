@@ -1,4 +1,5 @@
-data/*
+data/
+!Makefile
 *.pdf
 .Rproj.user
 .Rhistory

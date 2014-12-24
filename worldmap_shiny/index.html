@@ -1,0 +1,83 @@
+<html>
+<head>
+	<meta charset="utf-8" />
+	<meta name="generator" content="R package animation 2.3">
+	<title>Democracy and Dictatorship over Time</title>
+	<link rel="stylesheet" href="css/reset.css" />
+	<link rel="stylesheet" href="css/styles.css" />
+	<link rel="stylesheet" href="css/scianimator.css" />
+  <link rel="stylesheet" href="http://yandex.st/highlightjs/7.3/styles/github.min.css">
+
+	<script src="js/jquery-1.4.4.min.js"></script>
+	<script src="js/jquery.scianimator.min.js"></script>
+  <script type="text/javascript" src="http://yandex.st/highlightjs/7.3/highlight.min.js"></script>
+  <script type="text/javascript" src="http://yandex.st/highlightjs/7.3/languages/r.min.js"></script>
+  <script>hljs.initHighlightingOnLoad();</script>
+
+</head>
+<body>
+
+	<div class="scianimator"><div id="dd_map" style="display: inline-block;"></div></div>
+	<div class="scianimator" style="width: 1200px; text-align: left"><pre><code class="r">## Animations generated in R version 3.1.2 (2014-10-31) using the package animation
+library(dplyr)
+library(countrycode)
+library(gridExtra)
+library(animation)
+library(shiny)
+library(rgeos)
+library(foreign)
+library(cshapes)
+library(plyr)
+library(maptools)
+library(sp)
+library(ggplot2)
+for (i in 1946:2008) {
+    world <- cshp(date = as.Date(paste0(i, "-1-1")))
+    world.points <- fortify(world, region = "COWCODE")
+    world.df <- merge(world.points, dd[dd$year == i, ], by.x = "id", 
+        by.y = "cowcode", all.x = TRUE)
+    world.df <- world.df[order(world.df$order), ]
+    p.map <- ggplot(world.df, aes(long, lat, group = group, 
+        fill = democracy)) + geom_polygon() + labs(title = paste("Democracy and Dictatorship, year", 
+        i))
+    d <- unique(dd[dd$democracy == 0, "cowcode"])
+    d <- d[!is.na(d)]
+    num_col <- 6
+    num_row <- ceiling(length(d)/num_col)
+    df_full <- data.frame(cowcode = d, country = countrycode(d, 
+        origin = "cown", dest = "country.name")) %>% arrange(country)
+    df <- cbind.data.frame(df_full, x = floor(1:length(d)/num_row), 
+        y = (length(d) - 1):0%%num_row, democracy = as.factor(df_full$cowcode %in% 
+            dd[dd$democracy == 0 & dd$year == i, "cowcode"]))
+    p.name <- ggplot(data = df, aes(x, y, label = country, 
+        col = democracy)) + geom_text(hjust = 0, size = 4) + 
+        scale_color_manual(values = c("#EDF2F1", "black")) + 
+        expand_limits(x = c(0, num_col + 0.5)) + blank
+    df_ts <- ddply(dd, .(year), summarize, mean_dem = mean(as.numeric(as.character(democracy)), 
+        na.rm = TRUE), count_dem = sum(as.numeric(as.character(democracy)), 
+        na.rm = TRUE), count_na = sum(is.na((democracy))), 
+        count_total = sum(!is.na((democracy))))
+    p.ts <- ggplot(data = df_ts[df_ts$year <= i, ], aes(x = year, 
+        y = mean_dem)) + geom_line(col = gg_color_hue(2)[2]) + 
+        expand_limits(x = c(1946, 2008), y = c(0, 1)) + scale_x_continuous(breaks = c(1946, 
+        seq(1950, 2005, by = 5), 2008)) + ggtitle(paste("Proportion of Democracy =", 
+        df_ts[df_ts$year == i, "count_dem"], "/", df_ts[df_ts$year == 
+            i, "count_total"])) + ylab("proportion")
+    grid.newpage()
+    pushViewport(viewport(layout = grid.layout(2, 2)))
+    vplayout <- function(x, y) viewport(layout.pos.row = x, 
+        layout.pos.col = y)
+    print(p.map, vp = vplayout(1, 1))
+    print(p.ts, vp = vplayout(2, 1))
+    print(p.name, vp = vplayout(1:2, 2))
+}
+## R version 3.1.2 (2014-10-31)
+## Platform: x86_64-pc-linux-gnu (64-bit)
+## Other packages: dplyr 0.3.0.2, countrycode 0.17, gridExtra 0.9.1,
+## animation 2.3, shiny 0.10.2.2, rgeos 0.3-8, foreign 0.8-61, cshapes
+## 0.4-2, plyr 1.8.1, maptools 0.8-30, sp 1.0-16, ggplot2 1.0.0</code></pre></div>
+	<script src="js/dd_map.js"></script>
+<!-- highlight R code -->
+
+</body>
+</html>
